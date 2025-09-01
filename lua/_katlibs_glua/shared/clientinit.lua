@@ -2,6 +2,23 @@ if kat_ClientInit then return end
 kat_ClientInit = {}
 AddCSLuaFile()
 
+--[[ DOCS:
+Purpose:
+Quick and convenient sync the client with the server on choice data.
+Has a hook to know when it's safe to assume the client is up to date.
+
+SERVER:
+    Functions:
+        void kat_ClientInit.SendClientData(string key,function netmsg)
+
+	Hooks:
+		kat_OnClientInit(Player ply)
+
+CLIENT:
+    Functions:
+        void kat_ClientInit.ReceiveServerData(string key,function netmsg)
+]]
+
 local NETSTRING = "kat_clientinit"
 
 local h_Run = hook.Run
