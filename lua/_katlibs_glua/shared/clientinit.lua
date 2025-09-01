@@ -32,6 +32,8 @@ local pairs = pairs
 local receivers = {}
 
 if SERVER then
+	util.AddNetworkString(NETSTRING)
+
 	local alreadyLoaded = {}
 	hook.Add("PlayerDisconnected","kat_clientinit",function(ply)
 		alreadyLoaded[ply] = nil
