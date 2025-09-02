@@ -17,7 +17,7 @@ local n_WriteUInt = net.WriteUInt
 local n_ReadUInt = net.ReadUInt
 function kat_EnumNetMsg:New(netstring,enums)
     if SERVER then util.AddNetworkString(netstring) end
-    local highestEnum = enums[table.getWinningKey(enums)]
+    local highestEnum = enums[table.GetWinningKey(enums)]
     local enum_bitcount = math.floor(math.log(highestEnum,2)) + 1
     local receivers = {}
 
