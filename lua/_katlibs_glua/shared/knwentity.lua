@@ -74,7 +74,8 @@ elseif CLIENT then
         local knwEnt = activeEnts[eid]
         if knwEnt then return knwEnt end
         knwEnt = {
-            GetEntity = function() return Entity(eid) end
+            GetEntity = function() return Entity(eid) end,
+            EntIndex = function() return eid end,
         }
         activeEnts[eid] = knwEnt
 
