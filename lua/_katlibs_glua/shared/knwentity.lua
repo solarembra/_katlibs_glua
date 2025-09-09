@@ -67,15 +67,25 @@ if SERVER then
     end
     hook.Add("EntityRemoved","kat_NWEntity",kat_NWEntity.BroadcastRemoveCall)
 elseif CLIENT then
+    local retTrue = function() return true end
+    local retFalse = function() return false end
+
     local initialized = {}
     function net.ReadKNWEntity()
         local eid = n_ReadUInt(13)
 
         local knwEnt = activeEnts[eid]
-        if knwEnt then return knwEnt end
+        if knwEnt then
+            nwEnt.IsFirstTimeNetworked = retFalse
+            return knwEnt
+        end
+
+        local st = SysTime()
         knwEnt = {
             GetEntity = function() return Entity(eid) end,
             EntIndex = function() return eid end,
+            GetNWLifetime = function() return SysTime() - st end,
+            IsFirstTimeNetworked = retTrue,
         }
         activeEnts[eid] = knwEnt
 
