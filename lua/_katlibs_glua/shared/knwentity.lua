@@ -71,6 +71,25 @@ elseif CLIENT then
     local retFalse = function() return false end
 
     local initialized = {}
+    local hooks = setmetatable({},{__index = function(t,k)
+        local nT = {
+            OnInitialize = {},
+            OnDeinitialize = {},
+            OnRemove = {},
+        }
+        t[k] = nT
+        return nT
+    end})
+
+    local function callHooks(eid,hooktype)
+        local ent = Entity(eid)
+        local valid = IsValid(ent)
+
+        for _,func in pairs(hooks[eid][hooktype]) do
+            func(eid,valid and ent or nil)
+        end
+    end
+
     function net.ReadKNWEntity()
         local eid = n_ReadUInt(13)
 
@@ -82,6 +101,11 @@ elseif CLIENT then
 
         local st = SysTime()
         knwEnt = {
+            AddHook = function(hooktype,id,func)
+                local hookTab = hooks[eid][hooktype]
+                if not hookTab then error("invalid hooktype") end
+                hookTab[id] = func
+            end,
             GetEntity = function() return Entity(eid) end,
             EntIndex = function() return eid end,
             GetNWLifetime = function() return SysTime() - st end,
@@ -96,9 +120,7 @@ elseif CLIENT then
             if initialized[eid] then return end
             initialized[eid] = true
 
-            local init = knwEnt.OnInitialize
-            if not init then return end
-            init(eid,ent)
+            callHooks(eid,"OnInitialize")
         end)
 
         return knwEnt
@@ -122,9 +144,7 @@ elseif CLIENT then
         if initialized[eid] then return end
         initialized[eid] = true
 
-        local init = knwEnt.OnInitialize
-        if not init then return end
-        init(eid,ent)
+        callHooks(eid,"OnInitialize")
     end)
 
     hook.Add("EntityRemoved","kat_NWEntity",function(ent)
@@ -134,9 +154,7 @@ elseif CLIENT then
 
         initialized[eid] = nil
 
-        local deinit = knwEnt.OnDeinitialize
-        if not deinit then return end
-        deinit(eid,ent)
+        callHooks(eid,"OnDeinitialize")
     end)
 
     net.Receive(NETSTRING_ENTREMOVED, function()
@@ -144,10 +162,9 @@ elseif CLIENT then
         local knwEnt = activeEnts[eid]
         if not knwEnt then return end
 
-        local remove = knwEnt.OnRemove
-        if not remove then return end
-        remove(eid)
+        callHooks(eid,"OnRemove")
         activeEnts[eid] = nil
+        hooks[eid] = nil
     end)
 end
 
