@@ -95,13 +95,13 @@ elseif CLIENT then
 
         local knwEnt = activeEnts[eid]
         if knwEnt then
-            nwEnt.IsFirstTimeNetworked = retFalse
+            knwEnt.IsFirstTimeNetworked = retFalse
             return knwEnt
         end
 
         local st = SysTime()
         knwEnt = {
-            AddHook = function(hooktype,id,func)
+            AddHook = function(_,hooktype,id,func)
                 local hookTab = hooks[eid][hooktype]
                 if not hookTab then error("invalid hooktype") end
                 hookTab[id] = func
