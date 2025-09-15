@@ -15,10 +15,21 @@ SHARED:
 local n_Start = net.Start
 local n_WriteUInt = net.WriteUInt
 local n_ReadUInt = net.ReadUInt
+
+local function getBitsInNum(n)
+    local ct = 0;
+    while n ~= 0 do
+        ct = ct + 1
+        n = bit.rshift(n,1)
+    end
+
+    return ct;
+end
+
 function kat_EnumNetMsg:New(netstring,enums)
     if SERVER then util.AddNetworkString(netstring) end
     local highestEnum = enums[table.GetWinningKey(enums)]
-    local enum_bitcount = math.floor(math.log(highestEnum,2)) + 1
+    local enum_bitcount = getBitsInNum(highestEnum)
     local receivers = {}
 
     local function netMsgStart(messageEnum)
