@@ -19,8 +19,9 @@ local kat_library = instance.Libraries.kat
 --- Grants all SF permissions to this instance.
 -- @shared
 function kat_library.ignorePermissions()
-	for id,_ in pairs(SF.Permissions.providers) do
+	for id,privilege in pairs(SF.Permissions.privileges) do
 		instance.permissionOverrides[id] = true
+		privilege:buildcheck()
 	end
 end
 
