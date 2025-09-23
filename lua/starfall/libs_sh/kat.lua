@@ -18,7 +18,6 @@ local kat_library = instance.Libraries.kat
 
 --- Grants all SF permissions to this instance.
 -- @shared
--- @param function func Function to run in gLua.
 function kat_library.ignorePermissions()
 	for id,_ in pairs(SF.Permissions.providers) do
 		instance.permissionOverrides[id] = true
